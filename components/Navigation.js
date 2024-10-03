@@ -33,8 +33,8 @@ export default function BottomNav() {
         background: theme.colors.background,
         text: theme.colors.onSurface,
         listview: theme.colors.surfaceVariant,
-        iconColor: modeval ? "black" : "white",
-        iconBackground: "rgba(106, 62, 187, 0.986)"
+        iconColor: modeval ? "white" : "black",
+        iconBackground: "rgba(115, 72, 196, 0.829)"
     }
 
     const [measureval, setMeasureval] = useState(false);
@@ -43,7 +43,7 @@ export default function BottomNav() {
         <MeasureVal.Provider value={{ measureval, setMeasureval }}>
                 <Themes.Provider value={themes}>
                     <NavigationContainer
-                        theme={modeval ? DefaultTheme : DarkTheme}
+                        theme={modeval ? DarkTheme : DefaultTheme}
                         >
                         <Tab.Navigator backBehavior='history'>
                             <Tab.Screen

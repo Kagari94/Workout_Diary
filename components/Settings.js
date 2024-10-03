@@ -1,7 +1,8 @@
-import React, { useContext, useState } from "react"
-import { StyleSheet, View, Text } from "react-native"
-import { PaperProvider, Switch, useTheme } from "react-native-paper";
+import React, { useContext } from "react"
+import { View, Text } from "react-native"
+import { PaperProvider, RadioButton, Switch, useTheme } from "react-native-paper";
 import { MeasureVal, ModeVal, Themes } from "./UseContexts";
+import styles from "../styles/Styles"
 
 const Settings = () => {
 
@@ -12,20 +13,32 @@ const Settings = () => {
 
     return (
         <PaperProvider>
-            <View style={[styles.container, {backgroundColor: themes.background}]}>
+            <View style={[styles.container, { backgroundColor: themes.background }]}>
                 <View style={styles.buttonContainer}>
-                    <View style={[styles.touchablebutton, { backgroundColor: themes.listview, alignItems: 'center' }]}>
-                        <Text style={{ color: themes.text, fontSize: 17 }}>Measurement</Text>
-                        <Switch
-                            style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end' }}
-                            value={measureval}
-                            onValueChange={() => setMeasureval(!measureval)}
-                        />
+                    <View style={[styles.measureradio, { backgroundColor: themes.listview}]}>
+                        <Text style={{ color: themes.text, fontSize: 17 }}>Units</Text>
 
-                        <Text style={{color: themes.text}}>Km/Mi</Text>
+                        <View style={styles.radibuttongroup}>
+                        <RadioButton.Group
+                            onValueChange={(value) => {setMeasureval(value === 'false')}}
+                            value={measureval ? 'false' : 'true'}
+                        >
+                            <View  style={{flexDirection: 'row', alignItems: 'center'}}>
+                            <RadioButton
+                                value="true"
+                                uncheckedColor={themes.iconBackground}
+                            /><Text style={{color: themes.text}}>Km</Text>
+
+                            <RadioButton
+                                value="false"
+                                uncheckedColor={themes.iconBackground}
+                            /><Text style={{color: themes.text}}>Mi</Text>
+                            </View>
+                        </RadioButton.Group>
+                        </View>
                     </View>
 
-                    <View style={[styles.touchablebutton, { backgroundColor: themes.listview, alignItems: 'center' }]}>
+                    <View style={[styles.themeswitch, { backgroundColor: themes.listview, alignItems: 'center' }]}>
                         <Text style={{ color: themes.text, fontSize: 17 }}>Dark mode</Text>
                         <Switch
 
@@ -33,9 +46,9 @@ const Settings = () => {
                             value={modeval}
                             onValueChange={() => setModeVal(!modeval)}
 
-                        />{console.log(modeval)}
+                        />{console.log(measureval)}
 
-                        <Text style={{color: themes.text}}>On/Off</Text>
+                        <Text style={{ color: themes.text }}>Off/On</Text>
                     </View>
                 </View>
             </View>
@@ -43,23 +56,4 @@ const Settings = () => {
     )
 
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    },
-    buttonContainer: {
-        margin: 20,
-        padding: 10
-    },
-    touchablebutton: {
-        flexDirection: "row",
-        height: 50,
-        width: 350,
-        borderWidth: 1,
-        borderRadius: 20,
-        padding: 10,
-        marginTop: 10
-    }
-})
 export default Settings;

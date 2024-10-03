@@ -3,6 +3,7 @@ import { View, StyleSheet, FlatList, ScrollView, KeyboardAvoidingView, Platform 
 import { Modal, TextInput, Button, PaperProvider, Portal, Text, Icon, SegmentedButtons } from 'react-native-paper'
 import { Calendar } from "react-native-calendars";
 import { MeasureVal, Themes } from "./UseContexts";
+import styles from "../styles/Styles";
 
 const ExcerciseList = () => {
 
@@ -12,7 +13,12 @@ const ExcerciseList = () => {
 
     const [excercises, setExcercise] = useState([
         { id: 1, distance: 20, time: 2.5, date: '19.9.2024', icon: 'run-fast' },
-        { id: 2, distance: 3, time: 1.3, date: '20.9.2024', icon: 'swim' }
+        { id: 2, distance: 123, time: 123, date: '4.9.2024', icon: 'swim' },
+        { id: 3, distance: 22, time: 22, date: '22.9.2024', icon: 'bike-fast' },
+        { id: 4, distance: 52, time: 11, date: '31.9.2024', icon: 'swim' },
+        { id: 5, distance: 4, time: 55, date: '6.9.2024', icon: 'run-fast' },
+        { id: 6, distance: 11, time: 22, date: '14.9.2024', icon: 'swim' },
+        { id: 7, distance: 6, time: 11, date: '2.9.2024', icon: 'swim' }
     ]);
     const [runDistance, setRunDistance] = useState(0);
     const [swimDistance, setSwimDistance] = useState(0);
@@ -32,15 +38,15 @@ const ExcerciseList = () => {
         const distMode = measureval ? 'Mi' : 'Km';
         let distance = 0;
         if (measureval === true) {
-            distance = (excercise.distance * 0.621371).toFixed(2);
+            distance = Number(excercise.distance * 0.621371).toFixed(2);
         } else {
-            distance = excercise.distance;
-        } console.log("*****" + distance + "****");
+            distance = Number(excercise.distance).toFixed(2);
+        }
         return (
             <View style={[styles.flatlistview, { backgroundColor: themes.listview }]}>
                 <View>
                     <Text style={[styles.flatlisttext, { color: themes.text }]}>Distance: {distance}{distMode}</Text>
-                    <Text style={[styles.flatlisttext, { color: themes.text }]}>Time: {excercise.time}</Text>
+                    <Text style={[styles.flatlisttext, { color: themes.text }]}>Time: {excercise.time} min</Text>
                     <Text style={[styles.flatlisttext, { color: themes.text }]}>Date: {excercise.date}</Text>
                 </View>
                 <View style={styles.icon}>
@@ -89,13 +95,21 @@ const ExcerciseList = () => {
         } else if (date === null) {
             alert("Valitse päivämäärä")
         } else {
-            const exce = { id: excercises.length + 1, distance, time, date, icon: buttonState };
-            setExcercise([...excercises, exce]);
-            setDate(null);
-            AddingDistance();
-        }
-    }
+            if (measureval === true) {
+                const exce = { id: excercises.length + 1, distance: distance * 1.609344, time, date, icon: buttonState };
+                setExcercise([...excercises, exce]);
+                AddingDistance();
+            } else {
+                const exce = { id: excercises.length + 1, distance: distance, time, date, icon: buttonState };
+                setExcercise([...excercises, exce]);
+                AddingDistance();
+            }
 
+        }
+        setDate(null);
+        setTime(null);
+        setDistance(null);
+    }
     const hideModal = () => setCaldendarVisible(false);
 
     function dateSelected(day) {
@@ -150,13 +164,13 @@ const ExcerciseList = () => {
 
 
                                 <View style={styles.textview}>
-                                    <TextInput label="kilometrit" keyboardType='decimal-pad' style={styles.textinput} onChangeText={e => setDistance(e)} />
+                                    <TextInput label={measureval ? "miles" : "kilometers"} keyboardType='decimal-pad' style={styles.textinput} onChangeText={e => setDistance(e)} />
 
-                                    <TextInput label="aika(min)" keyboardType='decimal-pad' style={styles.textinput} onChangeText={e => setTime(e)} />
+                                    <TextInput label="time(min)" keyboardType='decimal-pad' style={styles.textinput} onChangeText={e => setTime(e)} />
                                 </View>
 
                                 <View style={styles.addexercise}>
-                                    <Text variant='bodyLarge' style={{ color: themes.text }}>{date ? date : 'Select date'}</Text>
+                                    <Text variant='bodyMedium' style={{ color: themes.text }}>{date ? date : 'Select date'}</Text>
                                     <Portal>
                                         <Modal
                                             visible={calendarVisible}
@@ -171,12 +185,12 @@ const ExcerciseList = () => {
                                 </View>
 
                                 <View style={styles.calendarButton}>
-                                    <Button mode='contained' onPress={e => setCaldendarVisible(true)} >Valitse</Button>
+                                    <Button mode='contained' onPress={e => setCaldendarVisible(true)} >Select</Button>
                                 </View>
 
 
                                 <View style={styles.donebutton}>
-                                    <Button mode='contained' onPress={() => { setModalVisible(false), AddExercise() }} >Lisää</Button>
+                                    <Button mode='contained' onPress={() => { setModalVisible(false), AddExercise() }} >Add</Button>
                                 </View>
 
                             </ScrollView>
@@ -187,16 +201,16 @@ const ExcerciseList = () => {
 
                 <View style={styles.combined}>
                     <View style={[styles.combinedicons, { backgroundColor: themes.listview }]}>
-                        <Icon source='run-fast' size={40} color={themes.iconColor} />
-                        <Text style={{ color: themes.text, marginLeft: 4 }}>{runDistance.toFixed(2)}{measureval ? 'Mi' : 'Km'}</Text>
+                        <Icon source='run-fast' size={50} color={themes.iconColor} />
+                        <Text style={{flex: 1, color: themes.text, fontSize: 12}}>{runDistance.toFixed(2)}{measureval ? 'Mi' : 'Km'}</Text>
                     </View>
                     <View style={[styles.combinedicons, { backgroundColor: themes.listview }]}>
-                        <Icon source='swim' size={40} color={themes.iconColor} />
-                        <Text style={{ color: themes.text, marginLeft: 4 }}>{swimDistance.toFixed(2)}{measureval ? 'Mi' : 'Km'}</Text>
+                        <Icon source='swim' size={50} color={themes.iconColor} />
+                        <Text style={{flex: 1, color: themes.text, fontSize: 12}}>{swimDistance.toFixed(2)}{measureval ? 'Mi' : 'Km'}</Text>
                     </View>
                     <View style={[styles.combinedicons, { backgroundColor: themes.listview }]}>
-                        <Icon source='bike-fast' size={40} color={themes.iconColor} />
-                        <Text style={{ color: themes.text, marginLeft: 4 }}>{bikeDistance.toFixed(2)}{measureval ? 'Mi' : 'Km'}</Text>
+                        <Icon source='bike-fast' size={50} color={themes.iconColor} />
+                        <Text style={{flex: 1, color: themes.text, fontSize: 12}}>{bikeDistance.toFixed(2)}{measureval ? 'Mi' : 'Km'}</Text>
                     </View>
                 </View>
 
@@ -209,7 +223,7 @@ const ExcerciseList = () => {
                 </View>
 
                 <View style={styles.addexercisebutton}>
-                    <Button mode='contained' onPress={() => setModalVisible(true)} >Lisää liikunta</Button>
+                    <Button mode='contained' onPress={() => setModalVisible(true)} >Add exercise</Button>
                 </View>
 
             </View>
@@ -217,95 +231,5 @@ const ExcerciseList = () => {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    },
-    modal: {
-        marginTop: -300, // Modal ei siirry ylös justifyllä etc, tähän täytyy tyytyä.
-        alignSelf: 'center',
-        height: 380
-    },
-    addexercise: {
-        marginTop: 15,
-        marginBottom: 10,
-        marginHorizontal: 17,
-    },
-    calendarView: {
-        flex: 1
-    },
-    calendarModal: {
-        flex: 1,
-        marginTop: -400,
-        alignSelf: 'center',
-        justifyContent: 'center',
-    },
-    textview: {
-        flex: 1,
-        alignContent: 'flex-start',
-        width: 350,
-        marginTop: 10,
-        marginHorizontal: 10
-    },
-    textinput: {
-        borderWidth: 1,
-        marginTop: 5,
-        marginBottom: 5
-    },
-    calendarButton: {
-        flex: 1,
-        width: 100,
-        alignSelf: 'flex-start',
-        marginHorizontal: 10,
-    },
-    addexercisebutton: {
-        flex: 0.1,
-        marginRight: 2,
-        justifyContent: 'center',
-        alignItems: 'flex-end',
-    },
-    donebutton: {
-        flex: 1,
-        marginTop: 30,
-        alignItems: 'flex-end',
-        marginHorizontal: 10
-    },
-    buttongroup: {
-        justifyContent: 'center',
-        paddingTop: 20,
-        paddingLeft: 10,
-        paddingRight: 10
-    },
-    flatlistview: {
-        flex: 1,
-        flexDirection: 'row',
-        marginTop: 10,
-        borderRadius: 10,
-    },
-    icon: {
-        flex: 1,
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        paddingRight: 10
-    },
-    combined: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        padding: 15,
-    },
-    combinedicons: {
-        backgroundColor: 'gray',
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 5,
-        marginLeft: 20,
-        borderWidth: 2,
-        borderRadius: 10
-    },
-    flatlisttext: {
-        fontSize: 15,
-        marginLeft: 20
-    }
-})
 
 export default ExcerciseList;
